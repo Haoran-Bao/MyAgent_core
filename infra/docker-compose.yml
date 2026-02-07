@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: agentpw
+      POSTGRES_DB: agentdb
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+
+  agent_core:
+    build: ../agent_core
+    environment:
+      DATABASE_URL: postgresql+psycopg://agent:agentpw@postgres:5432/agentdb
+      POLICY_PATH: /app/policy.yaml
+    ports: ["8000:8000"]
+    depends_on: [postgres]
+
+volumes:
+  pgdata:
